@@ -1,0 +1,6 @@
+myenv
+inputs
+__pycache__
+.venv
+*.jpg
+*.pkl

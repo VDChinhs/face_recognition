@@ -1,0 +1,13 @@
+# opencv-python==4.10.0.84
+# scikit-image==0.23.2
+# torch==2.2.1
+# Pillow==10.0.0
+# onnxruntime==1.18.1
+# insightface==0.7.3
+
+opencv-python
+scikit-image
+torch
+Pillow
+onnxruntime
+insightface
