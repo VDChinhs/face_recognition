@@ -47,8 +47,6 @@ def draw_on(img, faces):
                     if l == 0 or l == 3:
                         color = (0, 255, 0)
                     cv2.circle(dimg, (kps[l][0], kps[l][1]), 1, color, 2)
-            # if face.gender is not None and face.age is not None:
-            #     cv2.putText(dimg,'%s,%d'%(face.sex,face.age), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.7,(0,255,0),1)
 
             if face.identity is not None and 'identity' in face:
                 cv2.putText(dimg,'%s,%d'%(extract_name_from_path(face.identity), face.distance), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
@@ -63,9 +61,7 @@ def draw_on(img, faces):
                 if l == 0 or l == 3:
                     color = (0, 255, 0)
                 cv2.circle(dimg, (kps[l][0], kps[l][1]), 1, color, 2)
-        # if faces.gender is not None and faces.age is not None:
-        #     cv2.putText(dimg,'%s,%d'%(faces.sex,faces.age), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.7,(0,255,0),1)
-
+       
         if face.identity is not None and 'identity' in face:
             cv2.putText(dimg,'%s,%d'%(extract_name_from_path(face.identity), face.distance), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
     return dimg
@@ -124,6 +120,7 @@ def verify(faces, database: str):
 
     filenames = data['filenames']
     embeddings = data['embeddings']
+
     index_min = 0
     distance_hold = 24
 
@@ -138,6 +135,8 @@ def verify(faces, database: str):
 
         with open(f'{database}/embeddings.pkl', 'wb') as f:
             pickle.dump({'filenames': filenames, 'embeddings': embeddings}, f)
+        print("Lưu xong embeddings.pkl có thêm ảnh")
+
     else:
         if type(faces) == list:
             for face in faces:
