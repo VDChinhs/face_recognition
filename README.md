@@ -1,5 +1,4 @@
 # Face Recogition and Face Spoofing
----
 **Install dependency Library**
 Khuyên khích nên chạy thông qua venv
 ```
