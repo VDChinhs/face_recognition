@@ -38,7 +38,7 @@ def draw_on(img, faces):
         for i in range(len(faces)):
             face = faces[i]
             box = face.bbox.astype(np.int32)
-            color = (0, 0, 255)
+            color = (255, 0, 0)
             cv2.rectangle(dimg, (box[0], box[1]), (box[2], box[3]), color, 2)
             if face.kps is not None:
                 kps = face.kps.astype(np.int32)
@@ -52,7 +52,7 @@ def draw_on(img, faces):
                 cv2.putText(dimg,'%s,%d'%(extract_name_from_path(face.identity), face.distance), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
     else:
         box = faces.bbox.astype(np.int32)
-        color = (0, 0, 255)
+        color = (255, 0, 0)
         cv2.rectangle(dimg, (box[0], box[1]), (box[2], box[3]), color, 2)
         if faces.kps is not None:
             kps = faces.kps.astype(np.int32)
