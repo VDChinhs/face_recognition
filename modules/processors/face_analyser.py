@@ -5,6 +5,7 @@ from skimage import transform as trans
 import os
 import pickle
 import modules.globals
+import faiss
 
 FACE_ANALYSER = None
 center_points_cur_frame = []
@@ -49,7 +50,7 @@ def draw_on(img, faces):
                     cv2.circle(dimg, (kps[l][0], kps[l][1]), 1, color, 2)
 
             if face.identity is not None and 'identity' in face:
-                cv2.putText(dimg,'%s,%d'%(extract_name_from_path(face.identity), face.distance), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+                cv2.putText(dimg, f'{extract_name_from_path(face.identity)}, {round(face.distance, 2)}', (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
     else:
         box = faces.bbox.astype(np.int32)
         color = (255, 0, 0)
@@ -63,7 +64,7 @@ def draw_on(img, faces):
                 cv2.circle(dimg, (kps[l][0], kps[l][1]), 1, color, 2)
        
         if face.identity is not None and 'identity' in face:
-            cv2.putText(dimg,'%s,%d'%(extract_name_from_path(face.identity), face.distance), (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+            cv2.putText(dimg, f'{extract_name_from_path(face.identity)}, {round(face.distance, 2)}', (box[0]-1, box[1]-4),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
     return dimg
 
 def save_cut_frame(img, faces):
@@ -124,6 +125,12 @@ def verify(faces, database: str):
     index_min = 0
     distance_hold = 24
 
+    database_embeddings = np.array(embeddings).astype('float32')
+    faiss.normalize_L2(database_embeddings)
+    index = faiss.IndexFlatIP(512)
+    index.add(database_embeddings)
+    k = 1
+
     if(len(filenames) + 1 != len(os.listdir(database))):
         for filename in os.listdir(database):
             if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
@@ -140,31 +147,25 @@ def verify(faces, database: str):
     else:
         if type(faces) == list:
             for face in faces:
-                distance_min = np.linalg.norm(face.embedding - embeddings[index_min])
-                for index, embedding in enumerate(embeddings):
-                    distance = np.linalg.norm(face.embedding - embedding)
-                    if (distance < distance_min):
-                        distance_min = distance
-                        index_min = index
+                query_embedding = np.expand_dims(face.embedding, axis=0)
+                faiss.normalize_L2(query_embedding)
+                distances, indices = index.search(query_embedding, k)
+                confident = (1 + distances[0][0]) / 2
 
-                face['distance'] = distance_min
-                if (face['distance'] < distance_hold):
-                    face['identity'] = filenames[index_min]
-                else: 
+                face['distance'] = confident
+                if confident < 0.7:
                     face['identity'] = "unknow"
+                face['identity'] = filenames[indices[0][0]]
         else:
-            distance_min = np.linalg.norm(faces.embedding - embeddings[index_min])
-            for index, embedding in enumerate(embeddings):
-                distance = np.linalg.norm(faces.embedding - embedding)
-                if (distance < distance_min):
-                    distance_min = distance
-                    index_min = index
+            query_embedding = np.expand_dims(faces.embedding, axis=0)
+            faiss.normalize_L2(query_embedding)
+            distances, indices = index.search(query_embedding, k)
+            confident = (1 + distances[0][0]) / 2
 
-            faces['distance'] = distance_min
-            if (faces['distance'] < distance_hold):
-                faces['identity'] = filenames[index_min]
-            else: 
+            faces['distance'] = confident
+            if confident < 0.7:
                 faces['identity'] = "unknow"
+            faces['identity'] = filenames[indices[0][0]]
             return [faces]
     return faces
 
