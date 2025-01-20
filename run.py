@@ -4,6 +4,8 @@ from modules.processors.face_aniti_spoof import verify_face_real
 import cv2
 
 # cap = cv2.VideoCapture('rtsp://admin:Hicas%402022@10.0.10.119')
+# cap = cv2.VideoCapture('rtsp://192.168.1.8:8880/h264.sdp')
+# cap = cv2.VideoCapture('rtsp://192.168.1.5:8080/h264_pcm.sdp')
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -46,6 +48,7 @@ while True:
 
     rimg = draw_on(frame, faces_verify)
     cv2.imshow('Camera', rimg)
+    cv2.imshow('Camera', frame)
 
     if cv2.waitKey(1) == ord('q'):
         break

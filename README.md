@@ -7,5 +7,5 @@ pip install -r requirements.txt
 **Face Recogition**
 <img src="https://github.com/VDChinhs/face_recognition/blob/main/docs/recognition.jpg"/> 
 
-**Face Spoofing**
-#<img src="https://github.com/VDChinhs/face_recognition/blob/main/docs/spoofing.jpg"/> 
+<!-- **Face Spoofing** -->
+<!-- <img src="https://github.com/VDChinhs/face_recognition/blob/main/docs/spoofing.jpg"/> -->
