@@ -3,3 +3,5 @@ inputs
 __pycache__
 .venv
 *.pkl
+
+models_copy
